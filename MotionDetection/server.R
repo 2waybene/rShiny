@@ -25,24 +25,25 @@ for (k in 1: (length(dt$x) -2 ))
   angles[k] = temp.result
   signs[k] = temp.sign
 }  
-
-
 result <- list (A = angles, S = signs)
 
+##=======================================
+##  Done with helper functions run
+##======================================
 
+##  Now doing the shinyserver codes here...
 
 # Define server logic for random distribution application
 shinyServer(function(input, output) {
   
-  # Reactive expression to generate the requested distribution.
-  # This is called whenever the inputs change. The output
-  # functions defined below then all use the value computed from
-  # this expression
+
   choiceInput <- reactive({
         switch(input$var,
                    "Angle scatter plot" = "Scatter", 
                    "Angle density"      = "Density")
   })
+  
+  resultFile <- NULL
   
   # Generate a plot of the data. Also uses the inputs to build
   # the plot label. Note that the dependencies on both the inputs
@@ -66,14 +67,84 @@ shinyServer(function(input, output) {
     }else{}
   })
   
-  # Generate a summary of the data
-  output$summary <- renderPrint({
-    summary(data())
-  })
   
-  # Generate an HTML table view of the data
-  output$table <- renderTable({
-    data.frame(x=data())
-  })
+  #Second tab when plotting points are selected!!
+  
+ 
+   # output$points <- renderTable({
+    output$points <- renderPlot({   
+    
+ #  pointValues <- eventReactive( input$PointsPlot, 
+#      {
+  #pointValues <- function (){
+        point1 <- input$Point1
+        nums1 <- strsplit (point1, ",")
+        x1 <- as.numeric(nums1[[1]][1])
+        y1 <- as.numeric(nums1[[1]][2])
+  
+        point2 <- input$Point2
+        nums2 <- strsplit (point2, ",")
+        x2 <- as.numeric(nums2[[1]][1])
+        y2 <- as.numeric(nums2[[1]][2])
+    
+        point3 <- input$Point3
+        nums3 <- strsplit (point3, ",")
+        x3 <- as.numeric(nums3[[1]][1])
+        y3 <- as.numeric(nums3[[1]][2])
+  
+        # listPoints <- list (x = c(x1,x2,x3), y= c(y1,y2,y3))
+        x <- c(x1,x2,x3)
+        y <- c(y1,y2,y3)
+      #  list (x =  c(x1,x2,x3),y =  c(y1,y2,y3))
+        #}
+  #})
+  
+#   output$points <- renderPlot({    
+     
+    #  x = pointValues$x
+    #  y = pointValues$y
+xmin <- min (x[1],x[2],x[3])
+xmax <- max (x[1],x[2],x[3])
+xmin <- xmin*0.8
+xmax <- xmax*1.2
+
+ymin <- min (y[1],y[2],y[3])
+ymax <- max (y[1],y[2],y[3])
+ymin <- ymin*1.2
+ymax <- ymax*0.8
+
+#      myREVaxis(x,y,yside=2, xside = 1,  main = isolate("Three points plots"))
+      revaxis(x,y,yside=2, xside = 1,  main = isolate("Three points plots"))
+      segments(x[1],-y[1], x[2],-y[2])
+      segments(x[2],-y[2], x[3],-y[3], col=3,lty=3)
+      m <- (y[2]-y[1])/(x[2]-x[1])
+      b <- y[1] - m*x[1]
+      y3.prime <- m*x[3] + b
+      segments(x[2],-y[2], x[3],-y3.prime, col="red",lty=3)
+  
+    })
+
+
+
+    datasetInput <- reactive({
+        inFile <- input$file1
+        if (is.null(inFile))
+          return(NULL)
+        read.csv(inFile$datapath, header = input$header)
+     })
+      
+    output$view <- renderTable({  
+      head(datasetInput(), n = 10)
+    })
+    
+
+    data <- eventReactive(input$go, {
+
+      resultFile  <- computeAngles(datasetInput())
+    })
+    
+    output$Results <-  renderTable({  
+      head(data(),  n =  10)
+    })
   
 })

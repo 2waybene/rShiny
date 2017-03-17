@@ -201,3 +201,75 @@ viewAngle<-  function (x1,x2,x3,y1,y2,y3)
   legend("bottomleft", legend =leg)
   
 } 
+
+
+myREVaxis <-  function (x, y, xrev = FALSE, yrev = TRUE, xside = if (yrev) 3 else 1, 
+                        yside = if (xrev) 4 else 2, xlab = NULL, ylab = NULL, main = NULL, bty = NULL, 
+                        ...) 
+{
+  xname <- if (is.null(xlab)) 
+    deparse(substitute(x))
+  else xlab
+  yname <- if (is.null(ylab)) 
+    deparse(substitute(y))
+  else ylab
+  xlab <- if (yrev) 
+    ""
+  else xname
+  ylab <- if (xrev) 
+    ""
+  else yname
+  y1 <- if (yrev) 
+    -y
+  else y
+  x1 <- if (xrev) 
+    -x
+  else x
+  
+  old.mar <- par()$mar
+  on.exit(par(mar = old.mar))
+  par(mar = old.mar[c(xside, yside, 4 - xside, 6 - yside)])
+  
+  plot(x1, y1, main = title, axes = FALSE)
+  
+  if (xrev) {
+    axis(xside, at = pretty(-x), labels = rev(pretty(x)))
+    mtext(side = yside, line = 2, text = yname)
+  }
+  else axis(xside)
+  
+  if (yrev) {
+    axis(yside, at = pretty(-y), labels = rev(pretty(y)), 
+         srt = 90)
+    mtext(side = xside, line = 3, text = xname)
+  }
+  else axis(yside)
+  
+  if (!is.null(bty)) 
+    box(bty = bty)
+  invisible()
+}
+
+computeAngles <- function (dt)
+{
+  angles <- c("NA", "NA")
+  signs  <- c("NA", "NA")
+
+  for (k in 1: (length(dt$x) -2 ))
+  {
+    temp.result <- aoflip(dt$x[k],dt$x[k+1],dt$x[k+2],dt$y[k],dt$y[k+1],dt$y[k+2])
+    if (temp.result >= 0) {
+      temp.sign = "Pos"
+    }else{
+      temp.sign = "Neg"
+      temp.result = -temp.result
+    }
+    temp.list <- list (Angle = temp.result, Direction = temp.sign)
+
+    angles[k+2] = temp.result
+    signs [k+2] = temp.sign
+  }
+  out.dt <- cbind (dt, as.data.frame (list (Angle = angles, Direction = signs)))
+  return(out.dt)
+}
+

@@ -1,0 +1,11 @@
+name: MotionDetection
+title: MotionDetection
+account: 2waybene
+server: shinyapps.io
+appId: 164762
+bundleId: 751948
+url: https://2waybene.shinyapps.io/MotionDetection/
+when: 1489780878.26257
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: _work_1_server.R|temp.R|temptemp.R
