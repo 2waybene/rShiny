@@ -19,12 +19,17 @@ shinyUI <- navbarPage(title = "MotionDetecter",
     ),
     
     tabPanel(title = "Test points",
-      fluidRow(
-        column(3),
-        column(5)
-      ),
-      actionButton("points", "Resample")
-    ),
+             fluidRow(
+               column(4, textInput("caption", "First Point", " ")),
+               column(4, textInput("caption", "Second Point", " ")),
+               column(4, textInput("caption", "Third Point", " "))
+             ),
+             fluidRow(
+                plotOutput("hist")
+               )
+             
+            
+         ),
     tabPanel(title = "User input",
       plotOutput("chisq"),
       actionButton("upload", "Resample")
