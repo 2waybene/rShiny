@@ -70,39 +70,33 @@ shinyServer(function(input, output) {
   
   #Second tab when plotting points are selected!!
   
- 
-   # output$points <- renderTable({
+  pointValues<- eventReactive(input$PointsPlot, {
+    point1 <- input$Point1
+    nums1 <- strsplit (point1, ",")
+    x1 <- as.numeric(nums1[[1]][1])
+    y1 <- as.numeric(nums1[[1]][2])
+    
+    point2 <- input$Point2
+    nums2 <- strsplit (point2, ",")
+    x2 <- as.numeric(nums2[[1]][1])
+    y2 <- as.numeric(nums2[[1]][2])
+    
+    point3 <- input$Point3
+    nums3 <- strsplit (point3, ",")
+    x3 <- as.numeric(nums3[[1]][1])
+    y3 <- as.numeric(nums3[[1]][2])
+    x <- c(x1,x2,x3)
+    y <- c(y1,y2,y3)
+    list("xval" = x, "yval"=y)
+  })
+  
+
     output$points <- renderPlot({   
-    
- #  pointValues <- eventReactive( input$PointsPlot, 
-#      {
-  #pointValues <- function (){
-        point1 <- input$Point1
-        nums1 <- strsplit (point1, ",")
-        x1 <- as.numeric(nums1[[1]][1])
-        y1 <- as.numeric(nums1[[1]][2])
-  
-        point2 <- input$Point2
-        nums2 <- strsplit (point2, ",")
-        x2 <- as.numeric(nums2[[1]][1])
-        y2 <- as.numeric(nums2[[1]][2])
-    
-        point3 <- input$Point3
-        nums3 <- strsplit (point3, ",")
-        x3 <- as.numeric(nums3[[1]][1])
-        y3 <- as.numeric(nums3[[1]][2])
-  
-        # listPoints <- list (x = c(x1,x2,x3), y= c(y1,y2,y3))
-        x <- c(x1,x2,x3)
-        y <- c(y1,y2,y3)
-      #  list (x =  c(x1,x2,x3),y =  c(y1,y2,y3))
-        #}
-  #})
-  
-#   output$points <- renderPlot({    
-     
-    #  x = pointValues$x
-    #  y = pointValues$y
+ 
+        points.in <- pointValues()
+        x = points.in$xval
+        y = points.in$yval
+
 xmin <- min (x[1],x[2],x[3])
 xmax <- max (x[1],x[2],x[3])
 xmin <- xmin*0.8
@@ -125,7 +119,7 @@ ymax <- ymax*0.8
     })
 
 
-
+    #Third tab, allow user to enter dataset
     datasetInput <- reactive({
         inFile <- input$file1
         if (is.null(inFile))
@@ -139,7 +133,6 @@ ymax <- ymax*0.8
     
 
     data <- eventReactive(input$go, {
-
       resultFile  <- computeAngles(datasetInput())
     })
     
