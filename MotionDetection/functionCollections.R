@@ -174,33 +174,7 @@ aoflip <- function(x1,x2,x3,y1,y2,y3){
 }
 
 
-viewAngle<-  function (x1,x2,x3,y1,y2,y3)
-{
- # source("X:/project2017/Cui_lab/angleofrotation2_comment_JYL.R")
-  angDirection <- "Clockwise"
-  temp.result <- aoflip(x1,x2,x3,y1,y2,y3)
-  if (temp.result >= 0) {
-    temp.sign = "Pos"
-  }else{
-    temp.sign = "Neg"
-    temp.result = -temp.result
-    angDirection <- "Counter-Clockwise"
-  }
-  
-  x <- c(x1,x2,x3)
-  y <- c(y1,y2,y3)
-  revaxis(x,y,yside=2)
-  segments(x[1],-y[1], x[2],-y[2])
-  segments(x[2],-y[2], x[3],-y[3])
-  m <- (y[2]-y[1])/(x[2]-x[1])
-  b <- y[1] - m*x[1]
-  y3.prime <- m*x[3] + b
-  segments(x[2],-y[2], x[3],-y3.prime, col=3,lty=3)
-  leg <- list (Sign = angDirection, Ang = format(temp.result, digits =4))
-  legend(x = x1, y = -y3 + 2, legend =leg)
-  legend("bottomleft", legend =leg)
-  
-} 
+
 
 
 myREVaxis <-  function (x, y, xrev = FALSE, yrev = TRUE, xside = if (yrev) 3 else 1, 
@@ -230,7 +204,14 @@ myREVaxis <-  function (x, y, xrev = FALSE, yrev = TRUE, xside = if (yrev) 3 els
   on.exit(par(mar = old.mar))
   par(mar = old.mar[c(xside, yside, 4 - xside, 6 - yside)])
   
-  plot(x1, y1, main = title, axes = FALSE)
+  
+  xrange <- (max(x1) - min(x1))*0.1
+  yrange <- (max(y1) - min(y1))*0.1
+  
+  plot(x1, y1, xlim = c(min(x1)- xrange, max(x1) + xrange), ylim = c(min(y1)- yrange, max(y1) + yrange),
+       axes = FALSE, xlab = xlab, ylab = ylab, ...)
+  
+#  plot(x1, y1, main = title, axes = FALSE)
   
   if (xrev) {
     axis(xside, at = pretty(-x), labels = rev(pretty(x)))
