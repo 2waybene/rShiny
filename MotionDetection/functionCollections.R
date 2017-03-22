@@ -236,9 +236,9 @@ computeAngles <- function (dt)
   angles <- c("NA", "NA")
   signs  <- c("NA", "NA")
 
-  for (k in 1: (length(dt$x) -2 ))
+  for (k in 1: (length(dt[,1]) -2 ))
   {
-    temp.result <- aoflip(dt$x[k],dt$x[k+1],dt$x[k+2],dt$y[k],dt$y[k+1],dt$y[k+2])
+    temp.result <- aoflip(dt[k,1],dt[k+1,1],dt[k+2,1],dt[k,2],dt[k+1,2],dt[k+2,2])    
     if (temp.result >= 0) {
       temp.sign = "Pos"
     }else{

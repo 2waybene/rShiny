@@ -97,19 +97,11 @@ shinyServer(function(input, output, session) {
         x = points.in$xval
         y = points.in$yval
 
-xmin <- min (x[1],x[2],x[3])
-xmax <- max (x[1],x[2],x[3])
-xmin <- xmin*0.8
-xmax <- xmax*1.2
 
-ymin <- min (y[1],y[2],y[3])
-ymax <- max (y[1],y[2],y[3])
-ymin <- ymin*1.2
-ymax <- ymax*0.8
-
-#      myREVaxis(x,y,yside=2, xside = 1,  main = isolate("Three points plots"))
       temp.angle <- aoflip(x[1],x[2],x[3],y[1],y[2],y[3])
-      revaxis(x,y,yside=2, xside = 1,  main = isolate("Three points plots"))
+
+      myREVaxis(x,y,yside=2, xside = 1,  main = isolate("Three points plots"))     
+      
       segments(x[1],-y[1], x[2],-y[2])
       segments(x[2],-y[2], x[3],-y[3], col=3)
       m <- (y[2]-y[1])/(x[2]-x[1])
