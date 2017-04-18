@@ -65,12 +65,35 @@ shinyUI <- navbarPage(title = "MotionDetecter",
               actionButton(inputId = "go", 
                            "Compute Angle")
             ),
+            singleton(tags$head(HTML(
+              '
+                <script type="text/javascript">
+                 $(document).ready(function() {
+                 // disable download at startup. data_file is the id of the downloadButton
+                 $("#data_file").attr("disabled", "true").attr("onclick", "return false;");
+
+                Shiny.addCustomMessageHandler("download_ready", function(message) {
+                    $("#data_file").removeAttr("disabled").removeAttr("onclick").html(
+                     "<i class=\\"fa fa-download\\"></i>Download (file size: " + message.fileSize + ")");
+                });
+             })
+           </script>
+            '
+            ))),
+            
             fluidRow(
-              column(3,
-              tableOutput("Results")),
-              column(9,
-                     plotOutput("density"))
+              column(5,
+              tableOutput("Results"))
+            ),
+            fluidRow(
+              column(5,
+                     helpText("Download will be available once the processing is completed."))
+            ),
+            fluidRow(
+              column(2, 
+                     downloadButton("data_file"))
             )
+            
     )
 
 )
